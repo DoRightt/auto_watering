@@ -94,16 +94,16 @@ void loop() {
   checkBtn(okBtn);
 }
 
-//void StateButton::handler(State* st) {
-//  if (st.id == AUTO_STATE_ID) {
-//    st.id = MANUAL_STATE_ID;
-//  } else if (st.id == MANUAL_STATE_ID) {
-//    st.id = AUTO_STATE_ID;
-//  }
-//
-//  currentState.setState(currentState.id);
-//  showScreen(MAIN);
-//}
+void StateButton::handler() {
+  if (currentState.id == AUTO_STATE_ID) {
+    currentState.id = MANUAL_STATE_ID;
+  } else if (currentState.id == MANUAL_STATE_ID) {
+    currentState.id = AUTO_STATE_ID;
+  }
+
+  currentState.setState(currentState.id);
+  showScreen(MAIN);
+}
 
 void SettingButton::handler() {
   if (currentState.id == AUTO_STATE_ID) {

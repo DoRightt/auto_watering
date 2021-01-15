@@ -11,7 +11,7 @@ class CustomButton {
 public:
     unsigned short pin;
     bool wasUp;
-    virtual void handler(State*);
+    virtual void handler();
     CustomButton(unsigned short btnPin);
 };
 

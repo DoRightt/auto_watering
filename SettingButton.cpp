@@ -5,4 +5,3 @@
 #include "SettingButton.h"
 
 SettingButton::SettingButton(unsigned short btnPin):CustomButton(btnPin) {}
-

@@ -12,7 +12,7 @@
 class StateButton : public CustomButton {
 public:
     StateButton(unsigned short btnPin);
-    void handler(State*);
+    void handler();
 };
 
 
