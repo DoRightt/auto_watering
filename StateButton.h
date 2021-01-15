@@ -6,12 +6,13 @@
 #define AUTOPOLIV_STATEBUTTON_H
 
 #include "CustomButton.h"
+#include "State.h"
 
 
 class StateButton : public CustomButton {
 public:
     StateButton(unsigned short btnPin);
-    void handler();
+    void handler(State*);
 };
 
 

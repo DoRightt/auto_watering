@@ -12,23 +12,7 @@
  * 10K resistor:
  * ends to +5V and ground
  * wiper to LCD VO pin (pin 3)
-
- Library originally added 18 Apr 2008
- by David A. Mellis
- library modified 5 Jul 2009
- by Limor Fried (http://www.ladyada.net)
- example added 9 Jul 2009
- by Tom Igoe
- modified 22 Nov 2010
- by Tom Igoe
- modified 7 Nov 2016
- by Arturo Guadalupi
-
- This example code is in the public domain.
-
- http://www.arduino.cc/en/Tutorial/LiquidCrystalHelloWorld
-
-*/
+ */
 
 /*
 context ids:
@@ -39,6 +23,15 @@ context ids:
   4: watering dosage;
 */
 
+  
+/* State watering types: 
+ *  0: by days;
+ *  1: by soil moisture;
+ */
+
+#include <Arduino.h>
+#include "option.h"
+#include "State.h"
 #include "buttons.h"
 #include <LiquidCrystal.h>
 // initialize the library by associating any needed LCD interface pin
@@ -46,57 +39,9 @@ context ids:
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
-struct option {
-  public: 
-    int id;
-    String name;
-    option(int optionId, String optionName) {
-      id = optionId;
-      name = optionName;
-    }
-};
-
-option o1(1, "Watering type");
-option o2(2, "Next watering");
-option o3(3, "Watering dosage");
-
-
-// States
-const unsigned short AUTO_STATE_ID = 1;
-const unsigned short MANUAL_STATE_ID = 2;
-
-// Leds
-const unsigned short AUTO_LED_PIN = 10;
-const unsigned short MANUAL_LED_PIN = 9;
-
-class State {
-  public:
-    unsigned short id;
-    unsigned short waterDosage;
-    unsigned short moisture;
-    unsigned short daysToWatering;
-    unsigned short daysPassed;
-    unsigned short contextId = 0;
-    option options[3] {o1, o2, o3};
-    unsigned short selectedOptionId = options[0].id;
-    unsigned short prevOptionId;
-    State(unsigned short stateId, unsigned short dosage, unsigned short moisturePercent, unsigned short daysTo, unsigned short daysPass) {
-      id = stateId;
-      waterDosage = dosage;
-      moisture = moisturePercent;
-      daysToWatering = daysTo;
-      daysPassed = daysPass;
-    }
-    setContext(unsigned short id) {
-      contextId = id;
-    }
-    setState(int stateId) {
-      digitalWrite(AUTO_LED_PIN, id == AUTO_STATE_ID);
-      digitalWrite(MANUAL_LED_PIN, id == MANUAL_STATE_ID);
-    }
-};
-
-State currentState(2, 100, 0, 0, 0);
+enum Screens {MAIN, SETTINGS, WATERING_TYPE, NEXT_WATERING, WATERING_DOSAGE};
+unsigned long timer;
+State currentState(2, 100, 0, 1, 0);
 
 // Btns
 StateButton stateBtn(6);
@@ -115,7 +60,8 @@ void setup() {
   pinMode(topBtn.pin, INPUT_PULLUP);
   pinMode(cancelBtn.pin, INPUT_PULLUP);
   pinMode(okBtn.pin, INPUT_PULLUP);
-  
+
+  timer = millis();
   
   Serial.begin(9600);
   currentState.setState(MANUAL_STATE_ID);
@@ -148,27 +94,22 @@ void loop() {
   checkBtn(okBtn);
 }
 
-void StateButton::handler() {
-  if (currentState.id == AUTO_STATE_ID) {
-    currentState.id = MANUAL_STATE_ID;
-  } else if (currentState.id == MANUAL_STATE_ID) {
-    currentState.id = AUTO_STATE_ID;
-  }
-
-  currentState.setState(currentState.id);
-}
+//void StateButton::handler(State* st) {
+//  if (st.id == AUTO_STATE_ID) {
+//    st.id = MANUAL_STATE_ID;
+//  } else if (st.id == MANUAL_STATE_ID) {
+//    st.id = AUTO_STATE_ID;
+//  }
+//
+//  currentState.setState(currentState.id);
+//  showScreen(MAIN);
+//}
 
 void SettingButton::handler() {
   if (currentState.id == AUTO_STATE_ID) {
     currentState.setContext(1);
 
     updateOptionsView();
-//    lcd.begin(16, 2);
-//    lcd.print("*Watering type");  
-//    
-//    lcd.setCursor(0, 1);
-//    lcd.print("*Next watering");
-//    lcd.print(" Watering dosage");
   }
 }
 
@@ -192,6 +133,34 @@ void OkButton::handler() {
        lcd.setCursor(0, 1);
        lcd.print(message);
     }
+
+    if (currentState.selectedOptionId == 2) {
+       currentState.setContext(3);
+       char message[16];
+       if (currentState.wateringType == 0) {
+        sprintf(message, "In %d days", currentState.daysToWatering);
+       } 
+
+       if (currentState.wateringType == 1) {
+        sprintf(message, "Moisture is %d%%", currentState.moisture);
+       }
+       lcd.clear();
+       lcd.begin(16, 2);
+       lcd.print("Next watering:");
+       lcd.setCursor(0, 1);
+       lcd.print(message);
+    }
+
+    if (currentState.selectedOptionId == 1) {
+       currentState.setContext(2);
+       char message[16];
+       sprintf(message, "By %s", currentState.wateringType == 0 ? "days" : "soil moisture");
+       lcd.clear();
+       lcd.begin(16, 2);
+       lcd.print("Watering type:");
+       lcd.setCursor(0, 1);
+       lcd.print(message);
+    }
   }
 }
 
@@ -205,6 +174,39 @@ void TopButton::handler() {
       lcd.setCursor(0, 1);
       lcd.print(message);
     }
+  }
+
+  if (currentState.contextId == 3) {
+    if (currentState.wateringType == 0) {
+      if (currentState.daysToWatering < 30) {
+        clearLCDLine(2);
+        currentState.daysToWatering += 1;
+        char message[16];
+        sprintf(message, "In %d days", currentState.daysToWatering);
+        lcd.setCursor(0, 1);
+        lcd.print(message);
+      }
+    }
+
+    if (currentState.wateringType == 1) {
+      if (currentState.moisture < 100) {
+        clearLCDLine(2);
+        currentState.moisture += 5;
+        char message[16];
+        sprintf(message, "Moisture is %d%%", currentState.moisture);
+        lcd.setCursor(0, 1);
+        lcd.print(message);
+      }
+    }
+  }
+
+  if (currentState.contextId == 2) {
+    clearLCDLine(2);
+    currentState.wateringType = 0;
+    char message[16];
+    sprintf(message, "By %s", currentState.wateringType == 0 ? "days" : "soil moisture");
+    lcd.setCursor(0, 1);
+    lcd.print(message);
   }
 
   if (currentState.contextId == 1) {
@@ -228,6 +230,39 @@ void BotButton::handler() {
     }
   }
 
+  if (currentState.contextId == 3) {
+    if (currentState.wateringType == 0) {
+      if (currentState.daysToWatering > 1) {
+        clearLCDLine(2);
+        currentState.daysToWatering -= 1;
+        char message[16];
+        sprintf(message, "In %d days", currentState.daysToWatering);
+        lcd.setCursor(0, 1);
+        lcd.print(message);
+      }
+    }
+
+    if (currentState.wateringType == 1) {
+      if (currentState.moisture > 0) {
+        clearLCDLine(2);
+        currentState.moisture -= 5;
+        char message[16];
+        sprintf(message, "Moisture is %d%%", currentState.moisture);
+        lcd.setCursor(0, 1);
+        lcd.print(message);
+      }
+    }
+  }
+
+  if (currentState.contextId == 2) {
+    clearLCDLine(2);
+    currentState.wateringType = 1;
+    char message[16];
+    sprintf(message, "By %s", currentState.wateringType == 0 ? "days" : "soil moisture");
+    lcd.setCursor(0, 1);
+    lcd.print(message);
+  }
+
   if (currentState.contextId == 1) {
     if (currentState.selectedOptionId < 3) {
       currentState.prevOptionId = currentState.selectedOptionId;
@@ -240,18 +275,36 @@ void BotButton::handler() {
 void checkBtn(CustomButton &btn) {
   boolean buttonIsUp = digitalRead(btn.pin);
   if (btn.wasUp && !buttonIsUp) {
-    delay(10);
+    if (millis() - timer > 10){
+      timer = millis(); 
 
-    buttonIsUp = digitalRead(btn.pin);
+      buttonIsUp = digitalRead(btn.pin);
    
 
-    if (!buttonIsUp) {
-      btn.handler();
+      if (!buttonIsUp) {
+        btn.handler();
+      }
     }
   }
 
   btn.wasUp = buttonIsUp;
 }
+
+//void checkBtn(CustomButton &btn) {
+//  boolean buttonIsUp = digitalRead(btn.pin);
+//  if (btn.wasUp && !buttonIsUp) {
+//    delay(10);
+//
+//    buttonIsUp = digitalRead(btn.pin);
+//   
+//
+//    if (!buttonIsUp) {
+//      btn.handler();
+//    }
+//  }
+//
+//  btn.wasUp = buttonIsUp;
+//}
 
 void updateOptionsView() {
   String firstOptionName = currentState.options[0].name;
@@ -284,4 +337,17 @@ void clearLCDLine(int line) {
   for(int n = 0; n < 20; n++) {
     lcd.print(" ");
   }
+}
+
+void showScreen(Screens screen) {
+  switch (screen) {
+    case MAIN: 
+        lcd.begin(16, 2);
+        lcd.print("Moisture: 97%");
+        lcd.setCursor(0, 1);
+        lcd.print("Water level: low");
+        break;
+  }
+  enum Screens {MAIN, SETTINGS, WATERING_TYPE, NEXT_WATERING, WATERING_DOSAGE};
+  Serial.println(screen);
 }

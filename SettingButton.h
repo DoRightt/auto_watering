@@ -6,6 +6,7 @@
 #define AUTOPOLIV_SETTINGBUTTON_H
 
 #include "CustomButton.h"
+#include "State.h"
 
 class SettingButton : public CustomButton {
 public:
