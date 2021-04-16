@@ -6,7 +6,11 @@ Controller::Controller(State* st, View* v) {
 }
 
 void Controller::settingHandler() {
-    std::cout << "setting" << std:: endl;
+    if (state->state_id == AUTO_STATE_ID) {
+        state->setContext(1);
+
+        view->updateOptionsView();
+    }
 }
 
 void Controller::stateHandler() {

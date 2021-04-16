@@ -8,6 +8,14 @@ enum Options {
     watering_dosage = 3
 };
 
+enum Screens {
+    MAIN,
+    SETTINGS,
+    WATERING_TYPE,
+    NEXT_WATERING,
+    WATERING_DOSAGE
+};
+
 // State types
 const unsigned AUTO_STATE_ID = 1;
 const unsigned MANUAL_STATE_ID = 2;
