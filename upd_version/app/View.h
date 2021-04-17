@@ -5,8 +5,7 @@
 
 class View {
 public:
-    int n;
-    View(int i);
+    View();
 
     void updateOptionsView();
     void clearLcdLine(unsigned line);

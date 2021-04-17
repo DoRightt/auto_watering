@@ -17,7 +17,7 @@ using std::begin;
 
 int main() {
     State state(2, 100, 0, 1, 0);
-    View view(1);
+    View view;
     Controller controller(&state, &view);
 
 

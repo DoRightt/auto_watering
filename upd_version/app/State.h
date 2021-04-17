@@ -44,6 +44,9 @@ public:
     State(unsigned id, unsigned dosage, unsigned moisture_percent, unsigned days_to, unsigned days_pass);
     void setContext(unsigned id);
     void setStateId(int id);
+    bool isSettings();
+    bool isAutoState();
+    bool isManualState();
 };
 
 

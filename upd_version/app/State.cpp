@@ -16,3 +16,15 @@ void State::setStateId(int id) {
 //    digitalWrite(AUTO_LED_PIN, id == AUTO_STATE_ID);
 //    digitalWrite(MANUAL_LED_PIN, id == MANUAL_STATE_ID);
 }
+
+bool State::isSettings() {
+    return context_id == 1;
+}
+
+bool State::isAutoState() {
+    return state_id == AUTO_STATE_ID;
+}
+
+bool State::isManualState() {
+    return state_id == MANUAL_STATE_ID;
+}
