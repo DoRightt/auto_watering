@@ -48,24 +48,20 @@ void View::updateOptionsView(State* st) {
     unsigned cur_id = st->selected_option_id;
     unsigned prev_id = st->prev_option_id;
     char first_string[17];
-    char second_String[17];
+    char second_string[17];
 
     if ((cur_id == 1 && (!prev_id || prev_id == 2)) || cur_id == 2 && prev_id == 1) {
         sprintf(first_string, "%s%s", cur_id ==  1 ? ">" : " ", first_option_name.c_str());
-        sprintf(second_String, "%s%s", cur_id == 2 ? ">" : " ", second_option_name.c_str());
+        sprintf(second_string, "%s%s", cur_id == 2 ? ">" : " ", second_option_name.c_str());
     } else if (cur_id == 2 && (prev_id == 3) || cur_id == 3 && (prev_id == 2)) {
         sprintf(first_string, "%s%s", cur_id == 2 ? ">" : " ", second_option_name.c_str());
-        sprintf(second_String, "%s%s", cur_id == 3 ? ">" : " ", third_option_name.c_str());
+        sprintf(second_string, "%s%s", cur_id == 3 ? ">" : " ", third_option_name.c_str());
     }
 
 //  Serial.println(cur_id); // mb del?
 //  Serial.println(prev_id);  // mb del?
 
-    lcd.clear();
-    lcd.begin(16, 2);
-    lcd.print(first_string);
-    lcd.setCursor(0, 1);
-    lcd.print(second_String);
+    showScreen(first_string, second_string);
 }
 
 void View::clearLcdLine(unsigned line) {
@@ -78,21 +74,30 @@ void View::clearLcdLine(unsigned line) {
 void View::showScreen(Screens screen) {
     switch (screen) {
         case MAIN:
-            lcd.begin(16, 2);
-            lcd.print("Moisture: 97%");
-            lcd.setCursor(0, 1);
-            lcd.print("Water level: low");
+            printString(0, "Moisture: 97%");
+            printString(1, "Water level: low");
             break;
     }
 
     Serial.println(screen);
 }
 
+void View::showScreen(String first, String second) {
+    lcd.clear();
+    printString(0, first);
+    printString(1, second);
+}
+
+void View::printString(int i, String msg) {
+    lcd.setCursor(0, i);
+    lcd.print(msg);
+}
+
 void View::setCursor(int x, int y) {
     lcd.setCursor(x, y);
 }
 
-void View::print(char msg) {
+void View::print(String msg) {
     lcd.print(msg);
 }
 

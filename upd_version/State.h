@@ -21,7 +21,9 @@ public:
     unsigned selected_option_id = options[0].id;
     unsigned prev_option_id;
     unsigned watering_type = 0;
+
     State(unsigned id, unsigned dosage, unsigned moisture_percent, unsigned days_to, unsigned days_pass);
+
     void setContext(unsigned id);
     void setStateId(int id);
     bool isSettings();

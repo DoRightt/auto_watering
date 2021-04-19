@@ -31,8 +31,7 @@ void Controller::downHandler() {
                 char message[16];
                 sprintf(message, "%dml", state->water_dosage);
 
-                view->setCursor(0, 1);
-                view->print(message);
+                view->printString(1, message);
             }
 
             break;
@@ -45,8 +44,7 @@ void Controller::downHandler() {
                     char message[16];
                     sprintf(message, "In %d days", state->days_to_watering);
 
-                    view->setCursor(0, 1);
-                    view->print(message);
+                    view->printString(1, message);
                 }
             }
 
@@ -57,8 +55,7 @@ void Controller::downHandler() {
                     char message[16];
                     sprintf(message, "Moisture is %d%%", state->moisture);
 
-                    view->setCursor(0, 1);
-                    view->print(message);
+                    view->printString(1, message);
                 }
             }
 
@@ -70,8 +67,7 @@ void Controller::downHandler() {
             char message[16];
             sprintf(message, "By %s", state->watering_type == 0 ? "days" : "soil moisture");
 
-            view->setCursor(0, 1);
-            view->print(message);
+            view->printString(1, message);
 
             break;
         }
@@ -98,8 +94,7 @@ void Controller::upHandler() {
                 char message[16];
                 sprintf(message, "%dml", state->water_dosage);
 
-                view->setCursor(0, 1);
-                view->print(message);
+                view->printString(1, message);
             }
 
             break;
@@ -112,8 +107,7 @@ void Controller::upHandler() {
                     char message[16];
                     sprintf(message, "In %d days", state->days_to_watering);
 
-                    view->setCursor(0, 1);
-                    view->print(message);
+                    view->printString(1, message);
                 }
             }
 
@@ -124,8 +118,7 @@ void Controller::upHandler() {
                     char message[16];
                     sprintf(message, "Moisture is %d%%", state->moisture);
 
-                    view->setCursor(0, 1);
-                    view->print(message);
+                    view->printString(1, message);
                 }
             }
 
@@ -137,8 +130,7 @@ void Controller::upHandler() {
             char message[16];
             sprintf(message, "By %s", state->watering_type == 0 ? "days" : "soil moisture");
 
-            view->setCursor(0, 1);
-            view->print(message);
+            view->printString(1, message);
 
             break;
         }
@@ -154,11 +146,7 @@ void Controller::upHandler() {
 
 void Controller::cancelHandler() {
     state->setContext(0);
-
-    view->begin(16, 2);
-    view->print("Moisture: 97%");
-    view->setCursor(0, 1);
-    view->print("Water level: low");
+    view->showScreen("Moisture: 97%", "Water level: low");
 }
 
 void Controller::okHandler() {
@@ -170,12 +158,7 @@ void Controller::okHandler() {
                 char message[16];
                 sprintf(message, "%dml", state->water_dosage);
 
-                view->clear();
-                view->begin(16, 2);
-                view->print("Set dosage:");
-                view->setCursor(0, 1);
-                view->print(message);
-
+                view->showScreen("Set dosage:", message);
                 break;
             }
             case 2: {
@@ -190,12 +173,7 @@ void Controller::okHandler() {
                     sprintf(message, "Moisture is %d%%", state->moisture);
                 }
 
-                view->clear();
-                view->begin(16, 2);
-                view->print("Next watering:");
-                view->setCursor(0, 1);
-                view->print(message);
-
+                view->showScreen("Next watering:", message);
                 break;
             }
             case 1: {
@@ -203,12 +181,7 @@ void Controller::okHandler() {
                 char message[16];
                 sprintf(message, "By %s", state->watering_type == 0 ? "days" : "soil moisture");
 
-                view->clear();
-                view->begin(16, 2);
-                view->print("Watering type:");
-                view->setCursor(0, 1);
-                view->print(message);
-
+                view->showScreen("Watering type:", message);
                 break;
             }
         }
