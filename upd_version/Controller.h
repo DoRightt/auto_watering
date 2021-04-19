@@ -6,15 +6,6 @@
 #include "View.h"
 #include "Button.h"
 
-enum buttons {
-    state_button,
-    setting_button,
-    ok_button,
-    cancel_button,
-    up_button,
-    down_button
-};
-
 
 class Controller {
 public:

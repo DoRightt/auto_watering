@@ -13,8 +13,9 @@ void State::setContext(unsigned id) {
 }
 
 void State::setStateId(int id) {
-//    digitalWrite(AUTO_LED_PIN, id == AUTO_STATE_ID);
-//    digitalWrite(MANUAL_LED_PIN, id == MANUAL_STATE_ID);
+    state_id = id;
+    digitalWrite(AUTO_LED_PIN, id == AUTO_STATE_ID);
+    digitalWrite(MANUAL_LED_PIN, id == MANUAL_STATE_ID);
 }
 
 bool State::isSettings() {

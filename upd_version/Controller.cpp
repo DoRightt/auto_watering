@@ -9,15 +9,15 @@ void Controller::settingHandler() {
     if (state->state_id == AUTO_STATE_ID) {
         state->setContext(1);
 
-        view->updateOptionsView();
+        view->updateOptionsView(state);
     }
 }
 
 void Controller::stateHandler() {
     if (state->isAutoState()) {
-        state->state_id = MANUAL_STATE_ID;
+        state->setStateId(MANUAL_STATE_ID);
     } else if (state->isManualState()) {
-        state->state_id = AUTO_STATE_ID;
+        state->setStateId(AUTO_STATE_ID);
     }
 }
 
@@ -31,9 +31,8 @@ void Controller::downHandler() {
                 char message[16];
                 sprintf(message, "%dml", state->water_dosage);
 
-//              Should call view method
-//              lcd.setCursor(0, 1);
-//              lcd.print(message);
+                view->setCursor(0, 1);
+                view->print(message);
             }
 
             break;
@@ -46,9 +45,8 @@ void Controller::downHandler() {
                     char message[16];
                     sprintf(message, "In %d days", state->days_to_watering);
 
-//                  View method
-//                  lcd.setCursor(0, 1);
-//                  lcd.print(message);
+                    view->setCursor(0, 1);
+                    view->print(message);
                 }
             }
 
@@ -59,9 +57,8 @@ void Controller::downHandler() {
                     char message[16];
                     sprintf(message, "Moisture is %d%%", state->moisture);
 
-//                  View method
-//                  lcd.setCursor(0, 1);
-//                  lcd.print(message);
+                    view->setCursor(0, 1);
+                    view->print(message);
                 }
             }
 
@@ -73,9 +70,8 @@ void Controller::downHandler() {
             char message[16];
             sprintf(message, "By %s", state->watering_type == 0 ? "days" : "soil moisture");
 
-//          View method
-//          lcd.setCursor(0, 1);
-//          lcd.print(message);
+            view->setCursor(0, 1);
+            view->print(message);
 
             break;
         }
@@ -83,7 +79,7 @@ void Controller::downHandler() {
             if (state->selected_option_id < 3) {
                 state->prev_option_id = state->selected_option_id;
                 state->selected_option_id += 1;
-                view->updateOptionsView();
+                view->updateOptionsView(state);
             }
 
             break;
@@ -102,9 +98,8 @@ void Controller::upHandler() {
                 char message[16];
                 sprintf(message, "%dml", state->water_dosage);
 
-//              View method
-//              lcd.setCursor(0, 1);
-//              lcd.print(message);
+                view->setCursor(0, 1);
+                view->print(message);
             }
 
             break;
@@ -117,9 +112,8 @@ void Controller::upHandler() {
                     char message[16];
                     sprintf(message, "In %d days", state->days_to_watering);
 
-//                  View method
-//                  lcd.setCursor(0, 1);
-//                  lcd.print(message);
+                    view->setCursor(0, 1);
+                    view->print(message);
                 }
             }
 
@@ -130,9 +124,8 @@ void Controller::upHandler() {
                     char message[16];
                     sprintf(message, "Moisture is %d%%", state->moisture);
 
-//                  View method
-//                  lcd.setCursor(0, 1);
-//                  lcd.print(message);
+                    view->setCursor(0, 1);
+                    view->print(message);
                 }
             }
 
@@ -144,9 +137,8 @@ void Controller::upHandler() {
             char message[16];
             sprintf(message, "By %s", state->watering_type == 0 ? "days" : "soil moisture");
 
-//          View method
-//          lcd.setCursor(0, 1);
-//          lcd.print(message);
+            view->setCursor(0, 1);
+            view->print(message);
 
             break;
         }
@@ -154,7 +146,7 @@ void Controller::upHandler() {
             if (state->selected_option_id > 1) {
                 state->prev_option_id = state->selected_option_id;
                 state->selected_option_id -= 1;
-                view->updateOptionsView();
+                view->updateOptionsView(state);
             }
         }
     }
@@ -163,11 +155,10 @@ void Controller::upHandler() {
 void Controller::cancelHandler() {
     state->setContext(0);
 
-    // Should call view method
-    //lcd.begin(16, 2);
-    //lcd.print("Moisture: 97%");
-    //lcd.setCursor(0, 1);
-    //lcd.print("Water level: low");
+    view->begin(16, 2);
+    view->print("Moisture: 97%");
+    view->setCursor(0, 1);
+    view->print("Water level: low");
 }
 
 void Controller::okHandler() {
@@ -179,12 +170,11 @@ void Controller::okHandler() {
                 char message[16];
                 sprintf(message, "%dml", state->water_dosage);
 
-//              Should call view method
-//                lcd.clear();
-//                lcd.begin(16, 2);
-//                lcd.print("Set dosage:");
-//                lcd.setCursor(0, 1);
-//                lcd.print(message);
+                view->clear();
+                view->begin(16, 2);
+                view->print("Set dosage:");
+                view->setCursor(0, 1);
+                view->print(message);
 
                 break;
             }
@@ -200,12 +190,11 @@ void Controller::okHandler() {
                     sprintf(message, "Moisture is %d%%", state->moisture);
                 }
 
-//              Should call view method
-//                lcd.clear();
-//                lcd.begin(16, 2);
-//                lcd.print("Next watering:");
-//                lcd.setCursor(0, 1);
-//                lcd.print(message);
+                view->clear();
+                view->begin(16, 2);
+                view->print("Next watering:");
+                view->setCursor(0, 1);
+                view->print(message);
 
                 break;
             }
@@ -214,12 +203,11 @@ void Controller::okHandler() {
                 char message[16];
                 sprintf(message, "By %s", state->watering_type == 0 ? "days" : "soil moisture");
 
-//              Should call view method
-//                lcd.clear();
-//                lcd.begin(16, 2);
-//                lcd.print("Watering type:");
-//                lcd.setCursor(0, 1);
-//                lcd.print(message);
+                view->clear();
+                view->begin(16, 2);
+                view->print("Watering type:");
+                view->setCursor(0, 1);
+                view->print(message);
 
                 break;
             }
