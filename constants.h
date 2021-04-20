@@ -1,20 +1,19 @@
 #ifndef AUTOWATERING_CONSTANTS_H
 #define AUTOWATERING_CONSTANTS_H
 
-/*
-context ids:
-  0: main;
-  1: settings;
-  2: watering type;
-  3: next watering;
-  4: watering dosage;
-*/
+// State watering types:
+enum w_types {
+    by_days,
+    by_moisture
+};
 
-
-/* State watering types:
- *  0: by days;
- *  1: by soil moisture;
- */
+enum contexts {
+    main_ctx,
+    settings_ctx,
+    watering_type_ctx,
+    watering_next_ctx,
+    watering_dosage_ctx
+};
 
 enum buttons {
     state_button,
@@ -25,14 +24,13 @@ enum buttons {
     down_button
 };
 
-
-enum Options {
+enum options {
     watering_type = 1,
     watering_next = 2,
     watering_dosage = 3
 };
 
-enum Screens {
+enum screens {
     MAIN,
     SETTINGS,
     WATERING_TYPE,

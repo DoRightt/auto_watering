@@ -1,17 +1,13 @@
-//
-// Created by cosmicintruder on 15.01.2021.
-//
-#include <Arduino.h>
-
 #ifndef AUTO_WATERING_OPTION_H
 #define AUTO_WATERING_OPTION_H
 
+#include <Arduino.h>
 
 struct option {
 public:
     int id;
     String name;
-    option(int optionId, String optionName);
+    option(int option_id, String option_name);
 };
 
 

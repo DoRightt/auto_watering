@@ -1,10 +1,6 @@
-//
-// Created by cosmicintruder on 15.01.2021.
-//
-
 #include "option.h"
 
-option::option(int optionId, String optionName) {
-    id = optionId;
-    name = optionName;
+option::option(int option_id, String option_name) {
+    id = option_id;
+    name = option_name;
 }

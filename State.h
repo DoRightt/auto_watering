@@ -1,40 +1,40 @@
-//
-// Created by cosmicintruder on 15.01.2021.
-//
-#include <Arduino.h>
-#include "option.h"
-
 #ifndef AUTO_WATERING_STATE_H
 #define AUTO_WATERING_STATE_H
 
-// Options
-//1: "Watering type";
-//2: "Next watering";
-//3: "Watering dosage";
-
-// States
-const unsigned short AUTO_STATE_ID = 1;
-const unsigned short MANUAL_STATE_ID = 2;
-
-// Leds
-const unsigned short AUTO_LED_PIN = 10;
-const unsigned short MANUAL_LED_PIN = 9;
+#include <Arduino.h>
+#include "option.h"
+#include "constants.h"
 
 class State {
 public:
-    unsigned short id;
-    unsigned short waterDosage;
-    unsigned short moisture;
-    unsigned short daysToWatering;
-    unsigned short daysPassed;
-    unsigned short contextId = 0;
-    option options[3] {option (1, "Watering type"), option (2, "Next watering"), option (3, "Watering dosage")};
-    unsigned short selectedOptionId = options[0].id;
-    unsigned short prevOptionId;
-    unsigned short wateringType = 0;
-    State(unsigned short stateId, unsigned short dosage, unsigned short moisturePercent, unsigned short daysTo, unsigned short daysPass);
-    setContext(unsigned short id);
-    setState(int stateId);
+    unsigned state_id;
+    unsigned context_id = 0;
+    unsigned moisture;
+    unsigned water_dosage;
+    unsigned days_passed;
+    unsigned days_to_watering;
+    unsigned moisture_to_watering;
+    String water_level;
+    option options[3] {
+        option (options::watering_type, "Watering type"),
+        option (options::watering_next, "Next watering"),
+        option (options::watering_dosage, "Watering dosage")
+    };
+    unsigned selected_option_id = options[0].id;
+    unsigned prev_option_id;
+    unsigned watering_type = 0;
+
+    State(unsigned id, unsigned dosage, unsigned moisture_percent, unsigned days_to, unsigned days_pass);
+
+    int getContext();
+    void setContext(unsigned id);
+    void setStateId(int id);
+    void setWateringType(int type);
+    void setNextWatering(unsigned nxt);
+    void setDosage(unsigned dose);
+    bool isSettings();
+    bool isAutoState();
+    bool isManualState();
 };
 
 

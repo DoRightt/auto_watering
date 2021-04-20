@@ -11,7 +11,7 @@ public:
 
     void updateOptionsView(State* st);
     void clearLcdLine(unsigned line);
-    void showScreen(Screens screen);
+    void showScreen(screens screen);
     void showScreen(String first, String second);
     void printString(int i, String msg);
     void setCursor(int x, int y);

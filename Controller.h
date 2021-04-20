@@ -18,8 +18,14 @@ public:
     Button cancel_btn = decltype(cancel_btn)(16, buttons::cancel_button);
     Button ok_btn = decltype(ok_btn)(17, buttons::ok_button);
 
+    unsigned w_type_tmp;
+    unsigned w_next_d_tmp = 0;
+    unsigned w_next_m_tmp = 0;
+    unsigned dosage_tmp = 0;
+
     Controller(State* st, View* v);
 
+    void clearTemp();
     void settingHandler();
     void stateHandler();
     void downHandler();

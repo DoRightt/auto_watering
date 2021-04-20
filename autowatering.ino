@@ -26,7 +26,7 @@ void setup() {
     Serial.begin(9600);
     state.setStateId(MANUAL_STATE_ID);
     view.begin(16, 2);
-    view.showScreen(Screens::MAIN);
+    view.showScreen(screens::MAIN);
 }
 
 void loop() {

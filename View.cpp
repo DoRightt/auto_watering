@@ -71,7 +71,7 @@ void View::clearLcdLine(unsigned line) {
     }
 }
 
-void View::showScreen(Screens screen) {
+void View::showScreen(screens screen) {
     switch (screen) {
         case MAIN:
             printString(0, "Moisture: 97%");
