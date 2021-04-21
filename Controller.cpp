@@ -25,11 +25,12 @@ void Controller::downHandler() {
 
     switch (state->context_id) {
         case contexts::watering_dosage_ctx: {
-            if (state->water_dosage > 0) {
+            dosage_tmp = (dosage_tmp ? dosage_tmp : state->water_dosage);
+            if (dosage_tmp > 0) {
                 view->clearLcdLine(2);
-                state->water_dosage -= 25;
+                dosage_tmp -= 25;
                 char message[16];
-                sprintf(message, "%dml", state->water_dosage);
+                sprintf(message, "%dml", dosage_tmp);
 
                 view->printString(1, message);
             }
@@ -38,12 +39,11 @@ void Controller::downHandler() {
         }
         case contexts::watering_next_ctx: {
             if (state->watering_type == w_types::by_days) {
+                w_next_d_tmp = (w_next_d_tmp ? w_next_d_tmp : state->days_to_watering);
                 if (w_next_d_tmp > 1) {
                     view->clearLcdLine(2);
-//                    state->days_to_watering -= 1;
-                    w_next_d_tmp -= (w_next_d_tmp ? 1 : (state->days_to_watering - 1));
+                    w_next_d_tmp -= 1;
                     char message[16];
-//                    sprintf(message, "In %d days", state->days_to_watering);
                     sprintf(message, "In %d days", w_next_d_tmp);
 
                     view->printString(1, message);
@@ -52,11 +52,10 @@ void Controller::downHandler() {
 
             if (state->watering_type == w_types::by_moisture) {
                 if (w_next_m_tmp > 0) {
+                    w_next_m_tmp = (w_next_m_tmp ? w_next_m_tmp : state->moisture_to_watering);
                     view->clearLcdLine(2);
-//                    state->moisture_to_watering -= 5;
-                    w_next_m_tmp -= (w_next_m_tmp ? 5 : (state->moisture_to_watering - 5));
+                    w_next_m_tmp -= 5;
                     char message[16];
-//                    sprintf(message, "Moisture is %d%%", state->moisture_to_watering);
                     sprintf(message, "Moisture is %d%%", w_next_m_tmp);
 
                     view->printString(1, message);
@@ -67,10 +66,8 @@ void Controller::downHandler() {
         }
         case contexts::watering_type_ctx: {
             view->clearLcdLine(2);
-//            state->watering_type = w_types::by_moisture;
             w_type_tmp = w_types::by_moisture;
             char message[16];
-//            sprintf(message, "By %s", state->watering_type == 0 ? "days" : "soil moisture");
             sprintf(message, "By %s", "soil moisture");
 
             view->printString(1, message);
@@ -94,11 +91,12 @@ void Controller::upHandler() {
 
     switch (state->context_id) {
         case contexts::watering_dosage_ctx: {
-            if (state->water_dosage < 500) {
+            dosage_tmp = (dosage_tmp ? dosage_tmp : state->water_dosage);
+            if (dosage_tmp < 500) {
                 view->clearLcdLine(2);
-                state->water_dosage += 25;
+                dosage_tmp += 25;
                 char message[16];
-                sprintf(message, "%dml", state->water_dosage);
+                sprintf(message, "%dml", dosage_tmp);
 
                 view->printString(1, message);
             }
@@ -107,12 +105,11 @@ void Controller::upHandler() {
         }
         case contexts::watering_next_ctx: {
             if (state->watering_type == w_types::by_days) {
+                w_next_d_tmp = (w_next_d_tmp ? w_next_d_tmp : state->days_to_watering);
                 if (w_next_d_tmp < 30) {
                     view->clearLcdLine(2);
-//                    state->days_to_watering += 1;
-                    w_next_d_tmp += (w_next_d_tmp ? 1 : (state->days_to_watering + 1));
+                    w_next_d_tmp += 1;
                     char message[16];
-//                    sprintf(message, "In %d days", state->days_to_watering);
                     sprintf(message, "In %d days", w_next_d_tmp);
 
                     view->printString(1, message);
@@ -120,12 +117,11 @@ void Controller::upHandler() {
             }
 
             if (state->watering_type == w_types::by_moisture) {
+                w_next_m_tmp = (w_next_m_tmp ? w_next_m_tmp : state->moisture_to_watering);
                 if (w_next_m_tmp < 100) {
                     view->clearLcdLine(2);
-//                    state->moisture_to_watering += 5;
-                    w_next_m_tmp += (w_next_m_tmp ? 5 : (state->moisture_to_watering + 5));
+                    w_next_m_tmp += 5;
                     char message[16];
-//                    sprintf(message, "Moisture is %d%%", state->moisture_to_watering);
                     sprintf(message, "Moisture is %d%%", w_next_m_tmp);
 
                     view->printString(1, message);
@@ -136,10 +132,8 @@ void Controller::upHandler() {
         }
         case contexts::watering_type_ctx: {
             view->clearLcdLine(2);
-//            state->watering_type = w_types::by_days;
             w_type_tmp = w_types::by_days;
             char message[16];
-//            sprintf(message, "By %s", state->watering_type == w_types::by_days ? "days" : "soil moisture");
             sprintf(message, "By %s", "days");
 
             view->printString(1, message);
@@ -204,7 +198,13 @@ void Controller::okHandler() {
         state->setNextWatering((state->watering_type == w_types::by_days ? w_next_d_tmp : w_next_m_tmp));
         state->setContext(contexts::main_ctx);
         view->showScreen(MAIN);
+    } else if (state->getContext() == contexts::watering_dosage_ctx) {
+        state->setDosage(dosage_tmp);
+        state->setContext(contexts::main_ctx);
+        view->showScreen(MAIN);
     }
+
+    clearTemp();
 }
 
 void Controller::clearTemp() {

@@ -41,7 +41,7 @@ void loop() {
 void checkBtn(Button &btn) {
     bool btn_is_up = digitalRead(btn.pin);
     if (btn.was_up && !btn_is_up) {
-        if (millis() - timer > 10){
+        if (millis() - timer > 100){
             timer = millis();
 
             btn_is_up = digitalRead(btn.pin);
