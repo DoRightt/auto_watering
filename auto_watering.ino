@@ -6,8 +6,12 @@
 #include "View.h"
 
 #define WATERLEVEL_PIN A4
+#define MOISTURE_PIN A5
 
-unsigned long timer;
+unsigned long btn_timer;
+unsigned long moisture_timer;
+unsigned long w_level_timer;
+unsigned long days_timer;
 
 State state(2, 100, 0, 1, 0);
 View view;
@@ -23,7 +27,10 @@ void setup() {
     pinMode(controller.cancel_btn.pin, INPUT_PULLUP);
     pinMode(controller.ok_btn.pin, INPUT_PULLUP);
 
-    timer = millis();
+    btn_timer = millis();
+    w_level_timer = millis();
+    moisture_timer = millis();
+    days_timer = millis();
 
     Serial.begin(9600);
     state.setStateId(MANUAL_STATE_ID);
@@ -40,13 +47,15 @@ void loop() {
     checkBtn(controller.ok_btn);
 
     checkWaterLevel();
+    checkMoisture();
+    checkWatering();
 }
 
 void checkBtn(Button &btn) {
     bool btn_is_up = digitalRead(btn.pin);
     if (btn.was_up && !btn_is_up) {
-        if (millis() - timer > 100){
-            timer = millis();
+        if (millis() - btn_timer > 100){
+            btn_timer = millis();
 
             btn_is_up = digitalRead(btn.pin);
 
@@ -73,11 +82,38 @@ void checkBtn(Button &btn) {
 }
 
 void checkWaterLevel() {
-    if (millis() - timer > 1000) {
-        timer = millis();
+    if (millis() - w_level_timer > 1000) {
+        w_level_timer = millis();
 
         int w_level = analogRead(WATERLEVEL_PIN);
         state.water_level = w_level < 900 ? "low" : "OK";
-        Serial.println(state.water_level);
     }
+}
+
+void checkMoisture() {
+    if (millis() - moisture_timer > 1000) {
+        moisture_timer = millis();
+
+        int moisture = convertToPercent(analogRead(MOISTURE_PIN));
+        state.moisture = moisture;
+        Serial.println(state.moisture);
+    }
+}
+
+void checkWatering() {
+    int seconds = millis() / 1000;
+    int minutes = (millis() / 1000) / 60;
+    int hours = (millis() / 1000) / 60 / 60;
+    if (state.watering_type == w_types::by_days) {
+//        Serial.println(minutes);
+//        Serial.println(seconds);
+        delay(1000);
+    }
+}
+
+int convertToPercent(int value)
+{
+  int percentValue = 0;
+  percentValue = map(value, 1023, 465, 0, 100);
+  return percentValue;
 }
