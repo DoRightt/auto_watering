@@ -19,6 +19,10 @@ void Controller::stateHandler() {
     } else if (state->isManualState()) {
         state->setStateId(AUTO_STATE_ID);
     }
+
+    digitalWrite(A6, LOW);
+    state->setContext(contexts::main_ctx);
+    view->showScreen(screens::MAIN, state);
 }
 
 void Controller::downHandler() {
@@ -151,8 +155,15 @@ void Controller::upHandler() {
 }
 
 void Controller::cancelHandler() {
-    state->setContext(contexts::main_ctx);
-    view->showScreen("Moisture: 97%", "Water level: low");
+    if (state->isAutoState()) {
+        String moisture_msg = "Moisture: " + String(state->moisture) + "%";
+        String w_level_msg = "Water level: " + state->water_level;
+        state->setContext(contexts::main_ctx);
+        view->showScreen(moisture_msg, w_level_msg);
+    }
+    else if (state->isManualState()) {
+        digitalWrite(A6, LOW);
+    }
 }
 
 void Controller::okHandler() {
@@ -193,15 +204,17 @@ void Controller::okHandler() {
     } else if (state->getContext() == contexts::watering_type_ctx) {
         state->setWateringType(w_type_tmp);
         state->setContext(contexts::main_ctx);
-        view->showScreen(MAIN);
+        view->showScreen(MAIN, state);
     } else if(state->getContext() == contexts::watering_next_ctx) {
         state->setNextWatering((state->watering_type == w_types::by_days ? w_next_d_tmp : w_next_m_tmp));
         state->setContext(contexts::main_ctx);
-        view->showScreen(MAIN);
+        view->showScreen(MAIN, state);
     } else if (state->getContext() == contexts::watering_dosage_ctx) {
         state->setDosage(dosage_tmp);
         state->setContext(contexts::main_ctx);
-        view->showScreen(MAIN);
+        view->showScreen(MAIN, state);
+    } else if (state->isManualState()) {
+        digitalWrite(A6, HIGH);
     }
 
     clearTemp();

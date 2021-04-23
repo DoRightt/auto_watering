@@ -58,9 +58,6 @@ void View::updateOptionsView(State* st) {
         sprintf(second_string, "%s%s", cur_id == 3 ? ">" : " ", third_option_name.c_str());
     }
 
-//  Serial.println(cur_id); // mb del?
-//  Serial.println(prev_id);  // mb del?
-
     showScreen(first_string, second_string);
 }
 
@@ -71,15 +68,35 @@ void View::clearLcdLine(unsigned line) {
     }
 }
 
-void View::showScreen(screens screen) {
+void View::showScreen(screens screen, State* st) {
+    String s1, s2;
     switch (screen) {
         case MAIN:
-            printString(0, "Moisture: 97%");
-            printString(1, "Water level: low");
+            showScreen(main_screens::FIRST, st);
+    }
+}
+
+void View::showScreen(main_screens screen, State* st) {
+    String s1, s2;
+    switch (screen) {
+        case FIRST:
+            s1 = "Moisture: " + String(st->moisture) + "%";
+            s2 = "Water level: " + st->water_level;
+            current_main_screen = main_screens::FIRST;
+            break;
+        case SECOND:
+            s1 = "Nxt watering:" + (st->watering_type == w_types::by_days ? String(st->days_to_watering) + "d" : String(st->moisture_to_watering) + "%");
+            s2 = "Lst watering:" + String(st->days_passed) + "d";
+            current_main_screen = main_screens::SECOND;
+            break;
+        case THIRD:
+            s1 = "Watering dosage:";
+            s2 = String(st->water_dosage) + "ml";
+            current_main_screen = main_screens::THIRD;
             break;
     }
 
-    Serial.println(screen);
+    showScreen(s1, s2);
 }
 
 void View::showScreen(String first, String second) {

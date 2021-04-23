@@ -8,10 +8,12 @@
 class View {
 public:
     View();
+    unsigned current_main_screen = main_screens::FIRST;
 
     void updateOptionsView(State* st);
     void clearLcdLine(unsigned line);
-    void showScreen(screens screen);
+    void showScreen(screens screen, State* st);
+    void showScreen(main_screens screen, State* st);
     void showScreen(String first, String second);
     void printString(int i, String msg);
     void setCursor(int x, int y);

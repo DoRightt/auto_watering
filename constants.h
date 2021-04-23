@@ -38,6 +38,12 @@ enum screens {
     WATERING_DOSAGE
 };
 
+enum main_screens {
+    FIRST,
+    SECOND,
+    THIRD
+};
+
 // State types
 const unsigned AUTO_STATE_ID = 1;
 const unsigned MANUAL_STATE_ID = 2;
@@ -45,6 +51,8 @@ const unsigned MANUAL_STATE_ID = 2;
 // Leds
 const unsigned AUTO_LED_PIN = 10;
 const unsigned MANUAL_LED_PIN = 9;
+
+const unsigned PUMP_POWER = 80; // litres per hour
 
 
 #endif //AUTOWATERING_CONSTANTS_H

@@ -7,11 +7,14 @@
 
 #define WATERLEVEL_PIN A4
 #define MOISTURE_PIN A5
+#define PUMP_PIN A6
 
 unsigned long btn_timer;
 unsigned long moisture_timer;
 unsigned long w_level_timer;
 unsigned long days_timer;
+unsigned long main_screen_timer;
+unsigned long pump_timer;
 
 State state(2, 100, 0, 1, 0);
 View view;
@@ -31,11 +34,12 @@ void setup() {
     w_level_timer = millis();
     moisture_timer = millis();
     days_timer = millis();
+    main_screen_timer = millis();
 
     Serial.begin(9600);
     state.setStateId(MANUAL_STATE_ID);
     view.begin(16, 2);
-    view.showScreen(screens::MAIN);
+    view.showScreen(screens::MAIN, &state);
 }
 
 void loop() {
@@ -49,6 +53,7 @@ void loop() {
     checkWaterLevel();
     checkMoisture();
     checkWatering();
+    changeMainScreen();
 }
 
 void checkBtn(Button &btn) {
@@ -91,29 +96,59 @@ void checkWaterLevel() {
 }
 
 void checkMoisture() {
-    if (millis() - moisture_timer > 1000) {
+    if (millis() - moisture_timer > 500) {
         moisture_timer = millis();
 
         int moisture = convertToPercent(analogRead(MOISTURE_PIN));
         state.moisture = moisture;
-        Serial.println(state.moisture);
     }
 }
 
 void checkWatering() {
-    int seconds = millis() / 1000;
-    int minutes = (millis() / 1000) / 60;
-    int hours = (millis() / 1000) / 60 / 60;
+    unsigned seconds = millis() / 1000;
+    unsigned minutes = (millis() / 1000) / 60;
+    unsigned hours = (millis() / 1000) / 60 / 60;
+    unsigned days = (millis() / 1000) / 60 / 60 / 24;
+
     if (state.watering_type == w_types::by_days) {
-//        Serial.println(minutes);
-//        Serial.println(seconds);
-        delay(1000);
+        if (days > state.days_passed) {
+            state.days_passed += 1;
+        }
+
+        if (days >= state.days_to_watering) {
+            watering();
+        }
+    } else if(state.watering_type == w_types::by_moisture) {
+        if (state.moisture < state.moisture_to_watering) {
+            watering();
+        }
     }
 }
 
-int convertToPercent(int value)
-{
-  int percentValue = 0;
-  percentValue = map(value, 1023, 465, 0, 100);
-  return percentValue;
+void watering() {
+    state.days_passed = 0;
+    float mlPerSecond = PUMP_POWER / 3.6;
+    float wateringTime = state.water_dosage / (mlPerSecond / 1000);
+
+    digitalWrite(A6, HIGH);
+    delay(wateringTime);
+    digitalWrite(A6, LOW);
+}
+
+void changeMainScreen() {
+    if (state.getContext() == contexts::main_ctx) {
+        if (millis() - main_screen_timer > 10000) {
+            main_screen_timer = millis();
+            main_screens scr = (view.current_main_screen + 1) % 3;
+            view.showScreen(scr, &state);
+        }
+    }
+}
+
+int convertToPercent(int value) {
+    unsigned map_low = 1017;
+    unsigned map_high = 302;
+    int percentValue = 0;
+    percentValue = map(value, map_low, map_high, 0, 100);
+    return percentValue;
 }

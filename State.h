@@ -11,7 +11,7 @@ public:
     unsigned context_id = 0;
     unsigned moisture;
     unsigned water_dosage;
-    unsigned days_passed;
+    unsigned days_passed = 0;
     unsigned days_to_watering;
     unsigned moisture_to_watering;
     String water_level;
