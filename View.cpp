@@ -14,24 +14,6 @@
  * wiper to LCD VO pin (pin 3)
  */
 
-// first screen
-//  lcd.begin(16, 2);
-//  lcd.print("Moisture: 97%");
-//  lcd.setCursor(0, 1);
-//  lcd.print("Water level: low");
-
-// second screen
-//  lcd.begin(16, 2);
-//  lcd.print("nxt watering:10%");
-//  lcd.setCursor(0, 1);
-//  lcd.print("lst watering:10d");
-
-// third screen
-//  lcd.begin(16, 2);
-//  lcd.print("watering dosage:");
-//  lcd.setCursor(0, 1);
-//  lcd.print("100ml");
-
 #include "View.h"
 
 // initialize the library by associating any needed LCD interface pin
@@ -47,18 +29,17 @@ void View::updateOptionsView(State* st) {
     String third_option_name = st->options[2].name;
     unsigned cur_id = st->selected_option_id;
     unsigned prev_id = st->prev_option_id;
-    char first_string[17];
-    char second_string[17];
+    String s1, s2;
 
     if ((cur_id == 1 && (!prev_id || prev_id == 2)) || cur_id == 2 && prev_id == 1) {
-        sprintf(first_string, "%s%s", cur_id ==  1 ? ">" : " ", first_option_name.c_str());
-        sprintf(second_string, "%s%s", cur_id == 2 ? ">" : " ", second_option_name.c_str());
+        s1 = (cur_id ==  1 ? ">" : " ") + first_option_name;
+        s2 = (cur_id ==  2 ? ">" : " ") + second_option_name;
     } else if (cur_id == 2 && (prev_id == 3) || cur_id == 3 && (prev_id == 2)) {
-        sprintf(first_string, "%s%s", cur_id == 2 ? ">" : " ", second_option_name.c_str());
-        sprintf(second_string, "%s%s", cur_id == 3 ? ">" : " ", third_option_name.c_str());
+        s1 = (cur_id ==  2 ? ">" : " ") + second_option_name;
+        s2 = (cur_id ==  3 ? ">" : " ") + third_option_name;
     }
 
-    showScreen(first_string, second_string);
+      showScreen(s1, s2);
 }
 
 void View::clearLcdLine(unsigned line) {
@@ -72,7 +53,10 @@ void View::showScreen(screens screen, State* st) {
     String s1, s2;
     switch (screen) {
         case MAIN:
-            showScreen(main_screens::FIRST, st);
+//            showScreen(main_screens::FIRST, st);
+            printString(0, "Moisture: " + String(st->moisture) + "%");
+            printString(1, "Water level: " + String(st->water_level));
+            break;
     }
 }
 
@@ -81,21 +65,19 @@ void View::showScreen(main_screens screen, State* st) {
     switch (screen) {
         case FIRST:
             s1 = "Moisture: " + String(st->moisture) + "%";
-            s2 = "Water level: " + st->water_level;
-            current_main_screen = main_screens::FIRST;
+            s2 = "Water level: " + String(st->water_level);
             break;
         case SECOND:
             s1 = "Nxt watering:" + (st->watering_type == w_types::by_days ? String(st->days_to_watering) + "d" : String(st->moisture_to_watering) + "%");
             s2 = "Lst watering:" + String(st->days_passed) + "d";
-            current_main_screen = main_screens::SECOND;
             break;
         case THIRD:
             s1 = "Watering dosage:";
             s2 = String(st->water_dosage) + "ml";
-            current_main_screen = main_screens::THIRD;
             break;
     }
-
+    
+    current_main_screen = screen;
     showScreen(s1, s2);
 }
 
