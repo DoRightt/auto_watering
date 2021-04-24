@@ -1,6 +1,10 @@
 #ifndef AUTOWATERING_CONSTANTS_H
 #define AUTOWATERING_CONSTANTS_H
 
+#define WATERLEVEL_PIN A4
+#define MOISTURE_PIN A6
+#define PUMP_PIN 13
+
 // State watering types:
 enum w_types {
     by_days,

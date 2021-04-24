@@ -5,10 +5,6 @@
 #include "Controller.h"
 #include "View.h"
 
-#define WATERLEVEL_PIN A4
-#define MOISTURE_PIN A6
-#define PUMP_PIN 13
-
 extern volatile unsigned long timer0_millis;
 
 unsigned long btn_timer;
@@ -48,7 +44,6 @@ void setup() {
 }
 
 void loop() {
-//    digitalWrite(PUMP_PIN, HIGH);
     checkBtn(controller.state_btn);
     checkBtn(controller.setting_btn);
     checkBtn(controller.up_btn);
@@ -117,8 +112,6 @@ void checkMoisture() {
 }
 
 void checkWatering() {
-//    unsigned days = (millis() / 1000) / 60 / 60 / 24;
-
     if (state.watering_type == w_types::by_days) {
         if (millis() > (1000*3600*24)) {
             ++days;

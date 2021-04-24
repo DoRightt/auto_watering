@@ -162,7 +162,7 @@ void Controller::cancelHandler() {
         view->showScreen(moisture_msg, w_level_msg);
     }
     else if (state->isManualState()) {
-        digitalWrite(A6, LOW);
+        digitalWrite(PUMP_PIN, LOW);
     }
 }
 
@@ -214,7 +214,7 @@ void Controller::okHandler() {
         state->setContext(contexts::main_ctx);
         view->showScreen(MAIN, state);
     } else if (state->isManualState()) {
-        digitalWrite(A6, HIGH);
+        digitalWrite(PUMP_PIN, HIGH);
     }
 
     clearTemp();
