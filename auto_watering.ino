@@ -6,8 +6,8 @@
 #include "View.h"
 
 #define WATERLEVEL_PIN A4
-#define MOISTURE_PIN A5
-#define PUMP_PIN A6
+#define MOISTURE_PIN A6
+#define PUMP_PIN 13
 
 extern volatile unsigned long timer0_millis;
 
@@ -33,6 +33,7 @@ void setup() {
     pinMode(controller.up_btn.pin, INPUT_PULLUP);
     pinMode(controller.cancel_btn.pin, INPUT_PULLUP);
     pinMode(controller.ok_btn.pin, INPUT_PULLUP);
+    pinMode(PUMP_PIN, OUTPUT);
 
     btn_timer = millis();
     w_level_timer = millis();
@@ -47,6 +48,7 @@ void setup() {
 }
 
 void loop() {
+//    digitalWrite(PUMP_PIN, HIGH);
     checkBtn(controller.state_btn);
     checkBtn(controller.setting_btn);
     checkBtn(controller.up_btn);
@@ -140,9 +142,9 @@ void watering() {
     float mlPerSecond = PUMP_POWER / 3.6;
     float wateringTime = state.water_dosage / (mlPerSecond / 1000);
 
-    digitalWrite(A6, HIGH);
+    digitalWrite(PUMP_PIN, HIGH);
     delay(wateringTime);
-    digitalWrite(A6, LOW);
+    digitalWrite(PUMP_PIN, LOW);
 }
 
 void changeMainScreen() {
