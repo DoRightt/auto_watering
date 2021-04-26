@@ -213,10 +213,18 @@ void Controller::okHandler() {
         state->setContext(contexts::main_ctx);
         view->showScreen(MAIN, state);
     } else if (state->isManualState()) {
-        watering();
+        if (hasEnoughWater()) {
+            watering();
+        }
     }
 
     clearTemp();
+}
+
+bool Controller::hasEnoughWater() {
+    int w_level = analogRead(WATERLEVEL_PIN);
+
+    return w_level > 900;
 }
 
 void Controller::watering() {

@@ -120,13 +120,17 @@ void checkWatering() {
         }
 
         if (days >= state.days_to_watering) {
-            days = 0;
-            state.days_passed = 0;
-            controller.watering(state.watering_time);
+            if (controller.hasEnoughWater()) {
+                days = 0;
+                state.days_passed = 0;
+                controller.watering(state.watering_time);
+            }
         }
     } else if (state.watering_type == w_types::by_moisture) {
         if (state.moisture < state.moisture_to_watering) {
-            controller.watering(state.watering_time);
+            if (controller.hasEnoughWater()) {
+                controller.watering(state.watering_time);
+            }
         }
     }
 }

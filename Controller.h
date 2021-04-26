@@ -35,6 +35,7 @@ public:
     void watering();
     void watering(unsigned time);
     void stopWatering();
+    bool hasEnoughWater();
 };
 
 
