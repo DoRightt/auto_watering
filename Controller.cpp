@@ -1,6 +1,6 @@
 #include "Controller.h"
 
-Controller::Controller(State* st, View* v) {
+Controller::Controller(State *st, View *v) {
     state = st;
     view = v;
 }
@@ -87,7 +87,7 @@ void Controller::downHandler() {
 
             break;
         }
-        default: ;
+        default:;
     }
 }
 
@@ -160,9 +160,8 @@ void Controller::cancelHandler() {
         String w_level_msg = "Water level: " + state->water_level;
         state->setContext(contexts::main_ctx);
         view->showScreen(moisture_msg, w_level_msg);
-    }
-    else if (state->isManualState()) {
-        digitalWrite(PUMP_PIN, LOW);
+    } else if (state->isManualState()) {
+        stopWatering();
     }
 }
 
@@ -181,11 +180,11 @@ void Controller::okHandler() {
                 state->setContext(contexts::watering_next_ctx);
                 char message[16];
 
-                if (state->watering_type ==  w_types::by_days) {
+                if (state->watering_type == w_types::by_days) {
                     sprintf(message, "In %d days", state->days_to_watering);
                 }
 
-                if (state->watering_type ==  w_types::by_moisture) {
+                if (state->watering_type == w_types::by_moisture) {
                     sprintf(message, "Moisture is %d%%", state->moisture_to_watering);
                 }
 
@@ -205,7 +204,7 @@ void Controller::okHandler() {
         state->setWateringType(w_type_tmp);
         state->setContext(contexts::main_ctx);
         view->showScreen(MAIN, state);
-    } else if(state->getContext() == contexts::watering_next_ctx) {
+    } else if (state->getContext() == contexts::watering_next_ctx) {
         state->setNextWatering((state->watering_type == w_types::by_days ? w_next_d_tmp : w_next_m_tmp));
         state->setContext(contexts::main_ctx);
         view->showScreen(MAIN, state);
@@ -214,10 +213,24 @@ void Controller::okHandler() {
         state->setContext(contexts::main_ctx);
         view->showScreen(MAIN, state);
     } else if (state->isManualState()) {
-        digitalWrite(PUMP_PIN, HIGH);
+        watering();
     }
 
     clearTemp();
+}
+
+void Controller::watering() {
+    digitalWrite(PUMP_PIN, HIGH);
+}
+
+void Controller::watering(unsigned time) {
+    watering();
+    delay(time);
+    stopWatering();
+}
+
+void Controller::stopWatering() {
+    digitalWrite(PUMP_PIN, LOW);
 }
 
 void Controller::clearTemp() {

@@ -54,7 +54,7 @@ void loop() {
     checkWaterLevel();
     checkMoisture();
     checkWatering();
-//    changeMainScreen();
+    changeMainScreen();
 }
 
 void checkBtn(Button &btn) {
@@ -122,22 +122,13 @@ void checkWatering() {
         if (days >= state.days_to_watering) {
             days = 0;
             state.days_passed = 0;
-            watering();
+            controller.watering(state.watering_time);
         }
     } else if (state.watering_type == w_types::by_moisture) {
         if (state.moisture < state.moisture_to_watering) {
-            watering();
+            controller.watering(state.watering_time);
         }
     }
-}
-
-void watering() {
-    float mlPerSecond = PUMP_POWER / 3.6;
-    float wateringTime = state.water_dosage / (mlPerSecond / 1000);
-
-    digitalWrite(PUMP_PIN, HIGH);
-    delay(wateringTime);
-    digitalWrite(PUMP_PIN, LOW);
 }
 
 void changeMainScreen() {

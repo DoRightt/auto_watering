@@ -23,6 +23,7 @@ public:
     unsigned selected_option_id = options[0].id;
     unsigned prev_option_id;
     unsigned watering_type = 0;
+    unsigned watering_time;
 
     State(unsigned id, unsigned dosage, unsigned moisture_percent, unsigned days_to, unsigned days_pass);
 

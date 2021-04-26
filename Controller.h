@@ -32,6 +32,9 @@ public:
     void upHandler();
     void cancelHandler();
     void okHandler();
+    void watering();
+    void watering(unsigned time);
+    void stopWatering();
 };
 
 

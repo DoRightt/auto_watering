@@ -6,6 +6,8 @@ State::State(unsigned id, unsigned dosage, unsigned moisture_percent, unsigned d
     moisture = moisture_percent;
     days_to_watering = days_to;
     days_passed = days_pass;
+
+    watering_time = water_dosage / (ML_PER_SECOND / 1000);
 }
 
 void State::setContext(unsigned id) {
@@ -24,6 +26,7 @@ void State::setWateringType(int type) {
 
 void State::setDosage(unsigned dose) {
     water_dosage = dose;
+    watering_time = water_dosage / (ML_PER_SECOND / 1000);
 }
 
 void State::setNextWatering(unsigned nxt) {

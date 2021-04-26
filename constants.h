@@ -57,6 +57,7 @@ const unsigned AUTO_LED_PIN = 10;
 const unsigned MANUAL_LED_PIN = 9;
 
 const unsigned PUMP_POWER = 80; // litres per hour
+const unsigned ML_PER_SECOND = PUMP_POWER / 3.6;
 
 
 #endif //AUTOWATERING_CONSTANTS_H
