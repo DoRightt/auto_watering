@@ -16,7 +16,7 @@ unsigned long pump_timer;
 
 unsigned days = 0;
 
-State state(2, 100, 0, 1, 0);
+State state(2, 100, 0, 1, 0); // id: 2 (Manual state), dosage: 100, moisture: 0, days_to_watering: 1, days_passed: 0
 View view;
 Controller controller(&state, &view);
 
