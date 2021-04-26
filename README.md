@@ -19,4 +19,4 @@ If someone read this, im not sure about my circuit (https://www.tinkercad.com/th
 because i have some issues with it (lcd becomes less bright and text is gibberish when pump is working).
 I will be glad to accept your advice.
 
-<img src="https://github.com/DoRightt/auto_watering/blob/master/img/circuit.jpg?raw=true" width="800">
+<img src="https://github.com/DoRightt/auto_watering/blob/master/img/circuit2.jpg?raw=true" width="800">
