@@ -18,3 +18,5 @@ Circuit
 If someone read this, im not sure about my circuit (https://www.tinkercad.com/things/l3Y987Ci4E0-autowatering-system), 
 because i have some issues with it (lcd becomes less bright and text is gibberish when pump is working).
 I will be glad to accept your advice.
+
+<img>
